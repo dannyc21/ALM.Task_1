@@ -8,5 +8,10 @@ public class Main {
     String cardNumbers = userInput.nextLine();
 
     CreditCardValidator creditCard = new CreditCardValidator(cardNumbers);
+    try {
+      creditCard.validateCreditCard();
+    } catch(Exception e) {
+      System.out.println(e.getMessage());
+    }
   }
 }
