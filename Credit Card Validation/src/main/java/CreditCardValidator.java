@@ -1,5 +1,11 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+enum CardType { AMERICAN_EXPRESS }
+
 public class CreditCardValidator {
-  private String creditCardNumber;
+  private final String creditCardNumber;
   private String creditCardType;
 
   public CreditCardValidator(String creditCardNumber) {
@@ -7,7 +13,7 @@ public class CreditCardValidator {
   }
 
   public boolean validateNumbers() {
-    for (int i=0; i<creditCardNumber.length(); i++) {
+    for (int i = 0; i < creditCardNumber.length(); i++) {
       if (Character.isWhitespace(creditCardNumber.charAt(i)))
         continue;
 
@@ -20,20 +26,19 @@ public class CreditCardValidator {
     if (cardDigitsArray.length == 4) {
       this.creditCardType = getCreditCardType(Integer.parseInt(cardDigitsArray[0]));
       return this.creditCardType != null;
+    } else if (creditCardNumber.length() == 16) {
+      this.creditCardType = getCreditCardType(Integer.parseInt(creditCardNumber.substring(0, 4)));
+      return this.creditCardType != null;
     } else {
-      if (creditCardNumber.length() == 16) {
-        this.creditCardType = getCreditCardType(Integer.parseInt(creditCardNumber.substring(0, 4)));
-        return this.creditCardType != null;
-      }
+      return false;
     }
-    return false;
   }
 
   private String getCreditCardType(int firstFourNumbers) {
-    if (firstFourNumbers/1000 == 4)
+    if (firstFourNumbers / 1000 == 4)
       return "VISA";
-    else if (firstFourNumbers/1000 == 5) {
-      switch(firstFourNumbers/100) {
+    else if (firstFourNumbers / 1000 == 5) {
+      switch (firstFourNumbers / 100) {
         case 51:
         case 52:
         case 53:
@@ -41,11 +46,11 @@ public class CreditCardValidator {
         case 55:
           return "MASTERCARD";
       }
-    } else if (firstFourNumbers == 6011 || firstFourNumbers/100 == 65)
+    } else if (firstFourNumbers == 6011 || firstFourNumbers / 100 == 65)
       return "DISCOVER";
-    else if (firstFourNumbers/100 == 35)
+    else if (firstFourNumbers / 100 == 35)
       return "JCB";
-    else if (firstFourNumbers/100 == 34 || firstFourNumbers/100 == 37)
+    else if (firstFourNumbers / 100 == 34 || firstFourNumbers / 100 == 37)
       return "AMERICAN EXPRESS";
 
     return null;
@@ -60,25 +65,25 @@ public class CreditCardValidator {
 
       System.out.println("Errors:");
       if (this.creditCardNumber.length() != 16)
-        throw new RuntimeException("Length should be 16 symbols");
+        if (this.creditCardNumber.split(" ").length != 4)
+          throw new RuntimeException("Length should be 16 symbols");
 
       for (int i = 0; i < this.creditCardNumber.length(); i++) {
+        if (Character.isWhitespace(this.creditCardNumber.charAt(i)))
+          continue;
+
         if (!Character.isDigit(this.creditCardNumber.charAt(i))) {
           throw new RuntimeException("Number should contain only digits");
         }
       }
 
       if (this.creditCardType == null)
-        throw new RuntimeException("Payment System can't be determine");
+        throw new InvalidCreditCardType("Payment System can't be determine");
     }
-  }
-
-  public String getCreditCardNumber() {
-    return this.creditCardNumber;
   }
 
   @Override
   public String toString() {
-    return String.valueOf(this.creditCardNumber);
+    return this.creditCardNumber;
   }
 }
