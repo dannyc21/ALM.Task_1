@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 enum CardType {
@@ -9,71 +8,75 @@ enum CardType {
   MASTERCARD("MASTERCARD", "51", "52", "53", "54", "55"),
   AMERICAN_EXPRESS("AMERICAN EXPRESS", "34", "37");
   
-  private String paymentName;
-  private String[] prefix;
+  private final String paymentName;
+  private final List<String> prefix;
   
-  private CardType(String paymentName, String ...prefix) {
+  CardType(String paymentName, String ...prefix) {
     this.paymentName = paymentName;
-    this.firstDigits = firstDigits;
+    this.prefix = new ArrayList<String>(List.of(prefix));
   }
   
-  public String[] getFirstDigits() {
-    return this.firstDigits;
+  public List<String> getPrefix() {
+    return this.prefix;
+  }
+  public String getPaymentName() {
+    return this.paymentName;
   }
 }
 
 public class CreditCardValidator {
-  private static final CREDIT_CARD_LENGTH = 16;
+  private final int CREDIT_CARD_LENGTH = 16;
   private final String creditCardNumber;
-  private String creditCardType;
 
   public CreditCardValidator(String creditCardNumber) {
     this.creditCardNumber = creditCardNumber;
   }
 
-  public boolean validateNumbers() {
+  public String validateNumbers() {
     for (int i = 0; i < creditCardNumber.length(); i++) {
       if (Character.isWhitespace(creditCardNumber.charAt(i)))
         continue;
 
       if (!Character.isDigit(creditCardNumber.charAt(i))) {
-        return false;
+        return null;
       }
     }
 
     String[] cardDigitsArray = creditCardNumber.split(" ");
     if (cardDigitsArray.length == 4) {
-      this.creditCardType = getCreditCardType(cardDigitsArray[0]);
-      return this.creditCardType != null;
+      return PaymentSystemResolver(cardDigitsArray[0]);
     } else if (creditCardNumber.length() == 16) {
-      this.creditCardType = getCreditCardType(creditCardNumber.substring(0, 4));
-      return this.creditCardType != null;
+      return PaymentSystemResolver(creditCardNumber.substring(0, 4));
     } else {
-      return false;
+      return null;
     }
   }
 
-//   TODO: Finish the edits
-  private String getCreditCardType(String firstFourNumbers) {
-    if (firstFourNumbers.startsWith(CardType.VISA.getFirstDigits()[0]))
-      return "VISA";
-    else if (Array.asList(CardType.MASTERCARD).contains(firstFourNumbers.substring(0,2))) {
-      return "MASTERCARD";
-    } else if (Array.asList(CardType.MASTERCARD).contains(firstFourNumbers))
-      return "DISCOVER";
-    else if (firstFourNumbers / 100 == 35)
-      return "JCB";
-    else if (firstFourNumbers / 100 == 34 || firstFourNumbers / 100 == 37)
-      return "AMERICAN EXPRESS";
+  private String PaymentSystemResolver(String prefix) {
+    String systemName;
+    String prefixFirstTwo = prefix.substring(0, 2);
 
-    return null;
+    if (CardType.VISA.getPrefix().contains(prefix.substring(0,1)))
+      systemName = CardType.VISA.getPaymentName();
+    else if (CardType.MASTERCARD.getPrefix().contains(prefixFirstTwo))
+      systemName = CardType.MASTERCARD.getPaymentName();
+    else if (CardType.JCB.getPrefix().contains(prefixFirstTwo))
+      systemName = CardType.JCB.getPaymentName();
+    else if (CardType.DISCOVER.getPrefix().contains(prefix) || CardType.DISCOVER.getPrefix().contains(prefixFirstTwo))
+      systemName = CardType.DISCOVER.getPaymentName();
+    else if (CardType.AMERICAN_EXPRESS.getPrefix().contains(prefixFirstTwo))
+      systemName = CardType.AMERICAN_EXPRESS.getPaymentName();
+    else
+      systemName = null;
+
+    return systemName;
   }
 
   public void validateCreditCard() {
-    boolean isValidCard = validateNumbers();
+    String validatedNumbers = validateNumbers();
 
-    if (isValidCard) {
-      System.out.printf("Card is valid. Payment System is \"%s\"\n", this.creditCardType);
+    if (validatedNumbers != null) {
+      System.out.printf("Card is valid. Payment System is \"%s\"\n", validatedNumbers);
     } else {
 
       System.out.println("Errors:");
@@ -90,8 +93,7 @@ public class CreditCardValidator {
         }
       }
 
-      if (this.creditCardType == null)
-        throw new InvalidCreditCardType("Payment System can't be determine");
+      throw new InvalidCreditCardType("Payment System can't be determine");
     }
   }
 }
