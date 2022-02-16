@@ -8,7 +8,7 @@ public class Main {
     String cardNumbers = userInput.nextLine();
 
     CreditCardValidator creditCard = new CreditCardValidator(cardNumbers);
-    try {
+    try { 
       creditCard.validateCreditCard();
     } catch(Exception e) {
       System.out.println(e.getMessage());
