@@ -13,7 +13,7 @@ public enum CardType {
 
   CardType(String paymentName, String ...prefix) {
     this.paymentSystemName = paymentName;
-    this.prefixs = new ArrayList<String>(List.of(prefix));
+    this.prefixs = List.of(prefix);
   }
 
   public List<String> getPrefixs() {
