@@ -73,6 +73,7 @@ public class CreditCardValidator {
 
         if (!Character.isDigit(creditCardNumber.charAt(i))) {
           errorList.add("Number should contain only digits");
+          break;
         }
       }
 
