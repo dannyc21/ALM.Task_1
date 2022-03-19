@@ -1,0 +1,57 @@
+[IMPORTANT]:
+	note: Methods should only do the task they are meant to do, in main you do the rest, like showing dialog.
+
+[FORMATTING]:
+	note: add space between all methods
+		  name methods according to the actions they are doing, ex: actionName resolvePaymentSystem
+		  	paymentSystemResolver() change to resolvePaymentSystem
+
+
+TODO:
+	- add to gitignore: .iml (DONE)
+	- create the following packages: (DONE)
+		-> org.example/
+			> application/
+				+ Main.java
+				+ exceptions/
+					> InvalidCreditCardType.java // change to = InvalidCreditCardTypeException.java
+				+ creditCard/
+					> CardType.java
+					> CreditCardValidator.java
+
+	- Inside CreditCardValidator.java:
+		note: make the CREDIT_CARD_LENGTH constant static. And from now on make all constant variables static (better coding). Anywhere there is a 16 change it for the constant. (DONE)
+
+		note: push all the public methods to the top, then after place the private methods. this is for more readable code. Always place the public methods at the top and then
+		the privates. (DONE)
+
+		note: validateNumbers() get rid of the if statement that checks for length() == 4
+		and just have it to check for 16. Remove the cardDigitsArray variable NOT needed.
+			  do not use substring, pass in the entire string. (DONE)
+
+		note: containsNotOnlyDigits change to doesContainNotOnlyDigits. From now on all boolean methods start with either is, does, not, do (DONE)
+
+		note: paymentSystemResolver() change to resolvePaymentSystem and make public. Move resolvePaymentSystem() to CardType.java. Get rid of the if/else statement at the bottom. In the for loop if prefix found return it, and then outside of it return an empty string. (DONE)
+
+		note: validateCreditCard() should return list of errors, then in main if the list is empty then display the correct dialog, if not empty then traverse through the list. So get rid of all of the print() convert the type of the method to return a list of String. REMOVE the if statement that checks if .length() != 4 and instead check if .length() != CREDIT_CARD_LEGNTH. Then instead of for loop checking for digits/characters add if (!doesContainNotOnlyDigits) (DONE)
+
+			side note: the for loop display the error list, goes in main (this will be a private static method).
+
+		note: to where I will use (if I do) refactor variable validateNumbers to paymentSystem and change (only if needed) validateNumbers
+
+	- Inside Main.java:
+		note: create the CreditCardValidator class object. Create the corresponding methods to call the objects public methods and do all of the checking needed to do, create a method to display the errors (if any) or if the credit card is correct to show the correct text.
+
+	
+	- For JUnit:
+		note: Create a @Test for every public method. Each method should have a test for each possible response. For example:
+			. validateNumber() has two possible responses, 1) if the length of the string is 16 characters, or 2) if is not
+			. CardType enum class should have 5 diffent @Test for:
+				> VISA: to check if the string starts with "4"
+				> JCB: to check if the string starts with "35"
+				> DISCOVER: to check if the string starts with "6011" or "65"
+				> MASTERCARD: to check if the string starts with "51", "52", "53", "54", or "55"
+				> AMERICAN_EXPRESS: to check if the string start with "34", or "35"
+
+
+		
